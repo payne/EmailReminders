@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${pageTitle} + ' - Email Reminders'">Group - Email Reminders</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <header class="site-header">
+        <nav class="nav-container">
+            <a th:href="@{/}" class="logo">Email Reminders</a>
+            <div class="nav-links">
+                <a th:href="@{/dashboard}">Dashboard</a>
+                <a th:href="@{/groups}" class="active">Groups</a>
+                <a th:href="@{/events}">Events</a>
+                <a th:href="@{/profile}">Profile</a>
+                <form th:action="@{/logout}" method="post" class="logout-form">
+                    <button type="submit" class="btn-link">Logout</button>
+                </form>
+            </div>
+        </nav>
+    </header>
+
+    <main class="main-content">
+        <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+
+        <div class="page-header">
+            <div>
+                <h1 class="page-title" th:text="${group.name}">Group Name</h1>
+                <p th:if="${group.description}" class="text-muted" th:text="${group.description}">Description</p>
+            </div>
+            <div th:if="${isOwnerOrAdmin}">
+                <a th:href="@{/groups/{id}/edit(id=${group.id})}" class="btn btn-outline">Edit</a>
+            </div>
+        </div>
+
+        <div class="grid grid-2">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Members</h2>
+                    <span th:text="${#lists.size(group.members)} + ' members'">0 members</span>
+                </div>
+
+                <ul class="list-group">
+                    <li th:each="member : ${group.members}" class="list-group-item">
+                        <div>
+                            <strong th:text="${member.displayName} ?: ${member.email}">Member Name</strong>
+                            <span class="badge badge-primary" th:text="${member.role}">MEMBER</span>
+                        </div>
+                        <div th:if="${isOwnerOrAdmin and member.userId != group.owner.id}">
+                            <form th:action="@{/groups/{gid}/members/{uid}/remove(gid=${group.id}, uid=${member.userId})}"
+                                  method="post" style="display: inline;">
+                                <button type="submit" class="btn btn-sm btn-danger"
+                                        onclick="return confirm('Remove this member?')">Remove</button>
+                            </form>
+                        </div>
+                    </li>
+                </ul>
+
+                <div th:if="${isOwnerOrAdmin}" class="mt-3">
+                    <h3 style="font-size: 1rem; margin-bottom: 0.5rem;">Add Members</h3>
+                    <form th:action="@{/groups/{id}/members(id=${group.id})}" method="post">
+                        <div class="form-group">
+                            <input type="text" name="emails" class="form-control"
+                                   placeholder="Enter email addresses (comma separated)">
+                            <small class="form-text">Users must already have an account</small>
+                        </div>
+                        <button type="submit" class="btn btn-sm btn-primary">Add Members</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Group Info</h2>
+                </div>
+                <p><strong>Owner:</strong> <span th:text="${group.owner.email}">owner@example.com</span></p>
+                <p><strong>Created:</strong> <span th:text="${#temporals.format(group.createdAt, 'MMM d, yyyy')}">Jan 1, 2024</span></p>
+
+                <div th:if="${group.owner.id == currentUserId}" class="mt-3">
+                    <form th:action="@{/groups/{id}/delete(id=${group.id})}" method="post">
+                        <button type="submit" class="btn btn-danger"
+                                onclick="return confirm('Are you sure you want to delete this group? This cannot be undone.')">
+                            Delete Group
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-3">
+            <a th:href="@{/groups}" class="btn btn-outline">&larr; Back to Groups</a>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <p>&copy; 2024 Email Reminders</p>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Event Reminder</title>
+</head>
+<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f5f5f5;">
+    <div style="background-color: white; border-radius: 8px; padding: 40px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+        <h1 style="color: #333; margin-bottom: 8px; font-size: 20px;">Upcoming Event Reminder</h1>
+        <p style="color: #666; margin-bottom: 24px;">Hi <span th:text="${userName}">User</span>,</p>
+
+        <div style="background-color: #f8fafc; padding: 24px; border-radius: 8px; margin-bottom: 24px; border-left: 4px solid #2563eb;">
+            <h2 style="margin: 0 0 12px 0; color: #333; font-size: 18px;" th:text="${eventTitle}">Event Title</h2>
+            <p style="margin: 0 0 8px 0; color: #555;">
+                <strong>When:</strong> <span th:text="${eventTime}">Date and Time</span>
+            </p>
+            <p th:if="${eventDescription}" style="margin: 12px 0 0 0; color: #666;" th:text="${eventDescription}">
+                Event description goes here.
+            </p>
+        </div>
+
+        <h3 style="color: #333; font-size: 14px; margin-bottom: 16px;">Reminder Options</h3>
+
+        <div style="margin-bottom: 16px;">
+            <p style="color: #666; font-size: 14px; margin-bottom: 12px;">Snooze this reminder:</p>
+            <a th:href="${snooze1hUrl}"
+               style="display: inline-block; background-color: #3b82f6; color: white;
+                      padding: 10px 16px; text-decoration: none; border-radius: 4px;
+                      font-size: 14px; margin-right: 8px; margin-bottom: 8px;">
+                1 Hour
+            </a>
+            <a th:href="${snooze1dUrl}"
+               style="display: inline-block; background-color: #3b82f6; color: white;
+                      padding: 10px 16px; text-decoration: none; border-radius: 4px;
+                      font-size: 14px; margin-right: 8px; margin-bottom: 8px;">
+                1 Day
+            </a>
+            <a th:href="${snooze1wUrl}"
+               style="display: inline-block; background-color: #3b82f6; color: white;
+                      padding: 10px 16px; text-decoration: none; border-radius: 4px;
+                      font-size: 14px; margin-bottom: 8px;">
+                1 Week
+            </a>
+        </div>
+
+        <div style="margin-bottom: 16px;">
+            <a th:href="${turnOffSingleUrl}"
+               style="display: inline-block; background-color: #f59e0b; color: white;
+                      padding: 10px 16px; text-decoration: none; border-radius: 4px;
+                      font-size: 14px; margin-right: 8px;">
+                Turn Off This Reminder
+            </a>
+            <a th:if="${isRecurring}" th:href="${cancelAllUrl}"
+               style="display: inline-block; background-color: #ef4444; color: white;
+                      padding: 10px 16px; text-decoration: none; border-radius: 4px;
+                      font-size: 14px;">
+                Cancel All Future Reminders
+            </a>
+        </div>
+
+        <p style="color: #888; font-size: 12px; margin-top: 32px; padding-top: 20px; border-top: 1px solid #eee;">
+            You received this email because you are a member of a group subscribed to this event.
+        </p>
+    </div>
+</body>
+</html>

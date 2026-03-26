@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${pageTitle} + ' - Email Reminders'">My Groups - Email Reminders</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <header class="site-header">
+        <nav class="nav-container">
+            <a th:href="@{/}" class="logo">Email Reminders</a>
+            <div class="nav-links">
+                <a th:href="@{/dashboard}">Dashboard</a>
+                <a th:href="@{/groups}" class="active">Groups</a>
+                <a th:href="@{/events}">Events</a>
+                <a th:href="@{/profile}">Profile</a>
+                <form th:action="@{/logout}" method="post" class="logout-form">
+                    <button type="submit" class="btn-link">Logout</button>
+                </form>
+            </div>
+        </nav>
+    </header>
+
+    <main class="main-content">
+        <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+
+        <div class="page-header">
+            <h1 class="page-title">My Groups</h1>
+            <a th:href="@{/groups/new}" class="btn btn-primary">Create Group</a>
+        </div>
+
+        <div th:if="${#lists.isEmpty(groups)}" class="card empty-state">
+            <p>You're not a member of any groups yet.</p>
+            <a th:href="@{/groups/new}" class="btn btn-primary mt-2">Create Your First Group</a>
+        </div>
+
+        <div th:unless="${#lists.isEmpty(groups)}" class="grid grid-3">
+            <div th:each="group : ${groups}" class="card">
+                <h3 class="card-title mb-1">
+                    <a th:href="@{/groups/{id}(id=${group.id})}" th:text="${group.name}">Group Name</a>
+                </h3>
+                <p th:if="${group.description}" class="text-muted mb-2" th:text="${group.description}">Description</p>
+                <p class="text-muted">
+                    <span th:text="${#lists.size(group.members)}">0</span> members
+                </p>
+            </div>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <p>&copy; 2024 Email Reminders</p>
+    </footer>
+</body>
+</html>

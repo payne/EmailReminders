@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${pageTitle} + ' - Email Reminders'">Event - Email Reminders</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <header class="site-header">
+        <nav class="nav-container">
+            <a th:href="@{/}" class="logo">Email Reminders</a>
+            <div class="nav-links">
+                <a th:href="@{/dashboard}">Dashboard</a>
+                <a th:href="@{/groups}">Groups</a>
+                <a th:href="@{/events}" class="active">Events</a>
+                <a th:href="@{/profile}">Profile</a>
+                <form th:action="@{/logout}" method="post" class="logout-form">
+                    <button type="submit" class="btn-link">Logout</button>
+                </form>
+            </div>
+        </nav>
+    </header>
+
+    <main class="main-content">
+        <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+
+        <div class="page-header">
+            <div>
+                <h1 class="page-title" th:text="${event.title}">Event Title</h1>
+                <span th:if="${event.isRecurring}" class="badge badge-primary">Recurring</span>
+                <span th:unless="${event.isRecurring}" class="badge badge-success">One-time</span>
+            </div>
+            <div th:if="${isOwner}">
+                <a th:href="@{/events/{id}/edit(id=${event.id})}" class="btn btn-outline">Edit</a>
+            </div>
+        </div>
+
+        <div class="grid grid-2">
+            <div class="card">
+                <h2 class="card-title">Event Details</h2>
+                <p><strong>Date & Time:</strong>
+                    <span th:text="${#temporals.format(event.eventTime, 'EEEE, MMMM d, yyyy h:mm a')}">Jan 1, 2024</span>
+                </p>
+                <p><strong>Timezone:</strong> <span th:text="${event.timezone}">America/New_York</span></p>
+                <p><strong>Reminder:</strong> <span th:text="${event.reminderMinutesBefore}">60</span> minutes before</p>
+                <p th:if="${event.description}"><strong>Description:</strong>
+                    <span th:text="${event.description}">Description</span>
+                </p>
+
+                <div th:if="${event.isRecurring}" class="mt-2">
+                    <p><strong>Recurrence:</strong>
+                        Every <span th:text="${event.recurrenceInterval}">1</span>
+                        <span th:text="${event.recurrencePattern}">WEEKLY</span>
+                    </p>
+                    <p th:if="${event.recurrenceEndDate}"><strong>Until:</strong>
+                        <span th:text="${#temporals.format(event.recurrenceEndDate, 'MMM d, yyyy')}">Dec 31, 2024</span>
+                    </p>
+                </div>
+
+                <div th:if="${!#lists.isEmpty(event.groups)}" class="mt-2">
+                    <p><strong>Groups:</strong></p>
+                    <span th:each="group : ${event.groups}" class="badge badge-primary"
+                          style="margin-right: 0.5rem;" th:text="${group.name}">Group</span>
+                </div>
+
+                <div th:if="${isOwner}" class="mt-3">
+                    <form th:action="@{/events/{id}/delete(id=${event.id})}" method="post" style="display: inline;">
+                        <button type="submit" class="btn btn-danger"
+                                onclick="return confirm('Delete this event?')">Delete Event</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2 class="card-title">Upcoming Instances</h2>
+
+                <div th:if="${#lists.isEmpty(instances)}" class="text-muted">
+                    No upcoming instances.
+                </div>
+
+                <ul th:unless="${#lists.isEmpty(instances)}" class="list-group">
+                    <li th:each="instance : ${instances}" class="list-group-item">
+                        <span th:text="${#temporals.format(instance.instanceTime, 'EEE, MMM d h:mm a')}">Jan 1</span>
+                        <div th:if="${isOwner}">
+                            <form th:action="@{/events/{eid}/cancel-instance/{iid}(eid=${event.id}, iid=${instance.id})}"
+                                  method="post" style="display: inline;">
+                                <button type="submit" class="btn btn-sm btn-outline"
+                                        onclick="return confirm('Cancel this instance?')">Cancel</button>
+                            </form>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="mt-3">
+            <a th:href="@{/events}" class="btn btn-outline">&larr; Back to Events</a>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <p>&copy; 2024 Email Reminders</p>
+    </footer>
+</body>
+</html>

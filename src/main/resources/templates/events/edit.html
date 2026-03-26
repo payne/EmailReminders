@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${pageTitle} + ' - Email Reminders'">Edit Event - Email Reminders</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <header class="site-header">
+        <nav class="nav-container">
+            <a th:href="@{/}" class="logo">Email Reminders</a>
+            <div class="nav-links">
+                <a th:href="@{/dashboard}">Dashboard</a>
+                <a th:href="@{/groups}">Groups</a>
+                <a th:href="@{/events}" class="active">Events</a>
+                <a th:href="@{/profile}">Profile</a>
+                <form th:action="@{/logout}" method="post" class="logout-form">
+                    <button type="submit" class="btn-link">Logout</button>
+                </form>
+            </div>
+        </nav>
+    </header>
+
+    <main class="main-content">
+        <div class="card" style="max-width: 600px;">
+            <h1 class="card-title mb-3">Edit Event</h1>
+
+            <form th:action="@{/events/{id}(id=${event.id})}" method="post">
+                <div class="form-group">
+                    <label for="title" class="form-label">Event Title *</label>
+                    <input type="text" id="title" name="title" class="form-control"
+                           th:value="${event.title}" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="description" class="form-label">Description</label>
+                    <textarea id="description" name="description" class="form-control"
+                              rows="3" th:text="${event.description}"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="reminderMinutesBefore" class="form-label">Remind me</label>
+                    <select id="reminderMinutesBefore" name="reminderMinutesBefore" class="form-control">
+                        <option value="15" th:selected="${event.reminderMinutesBefore == 15}">15 minutes before</option>
+                        <option value="30" th:selected="${event.reminderMinutesBefore == 30}">30 minutes before</option>
+                        <option value="60" th:selected="${event.reminderMinutesBefore == 60}">1 hour before</option>
+                        <option value="120" th:selected="${event.reminderMinutesBefore == 120}">2 hours before</option>
+                        <option value="1440" th:selected="${event.reminderMinutesBefore == 1440}">1 day before</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                    <a th:href="@{/events/{id}(id=${event.id})}" class="btn btn-outline">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <p>&copy; 2024 Email Reminders</p>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,10 @@
+spring:
+  jpa:
+    show-sql: true
+  thymeleaf:
+    cache: false
+
+logging:
+  level:
+    pl.piomin.services: DEBUG
+    org.hibernate.SQL: DEBUG

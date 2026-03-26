@@ -1,0 +1,69 @@
+version: 2.1
+
+jobs:
+  build-and-test:
+    docker:
+      - image: cimg/openjdk:21.0
+      - image: cimg/postgres:16.0
+        environment:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: emailreminders_test
+    environment:
+      MAVEN_OPTS: -Xmx1024m
+      DATABASE_URL: jdbc:postgresql://localhost:5432/emailreminders_test
+      DATABASE_USERNAME: postgres
+      DATABASE_PASSWORD: postgres
+      JWT_SECRET: test-secret-key-for-testing-purposes-only-minimum-256-bits-required
+      APP_BASE_URL: http://localhost:8080
+      FROM_EMAIL: test@example.com
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "pom.xml" }}
+            - v1-dependencies-
+      - run:
+          name: Wait for PostgreSQL
+          command: |
+            for i in `seq 1 30`; do
+              nc -z localhost 5432 && echo Success && exit 0
+              echo -n .
+              sleep 1
+            done
+            echo Failed waiting for PostgreSQL && exit 1
+      - run:
+          name: Build and Test
+          command: mvn clean verify -B
+      - save_cache:
+          paths:
+            - ~/.m2
+          key: v1-dependencies-{{ checksum "pom.xml" }}
+      - store_test_results:
+          path: target/surefire-reports
+      - store_artifacts:
+          path: target/site/jacoco
+          destination: coverage-report
+
+  docker-build:
+    docker:
+      - image: cimg/base:current
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: default
+      - run:
+          name: Build Docker Image
+          command: docker build -t emailreminders:${CIRCLE_SHA1:0:7} .
+
+workflows:
+  version: 2
+  build-test-deploy:
+    jobs:
+      - build-and-test
+      - docker-build:
+          requires:
+            - build-and-test
+          filters:
+            branches:
+              only: main

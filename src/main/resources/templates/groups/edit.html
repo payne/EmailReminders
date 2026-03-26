@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${pageTitle} + ' - Email Reminders'">Edit Group - Email Reminders</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <header class="site-header">
+        <nav class="nav-container">
+            <a th:href="@{/}" class="logo">Email Reminders</a>
+            <div class="nav-links">
+                <a th:href="@{/dashboard}">Dashboard</a>
+                <a th:href="@{/groups}" class="active">Groups</a>
+                <a th:href="@{/events}">Events</a>
+                <a th:href="@{/profile}">Profile</a>
+                <form th:action="@{/logout}" method="post" class="logout-form">
+                    <button type="submit" class="btn-link">Logout</button>
+                </form>
+            </div>
+        </nav>
+    </header>
+
+    <main class="main-content">
+        <div class="card" style="max-width: 600px;">
+            <h1 class="card-title mb-3">Edit Group</h1>
+
+            <form th:action="@{/groups/{id}(id=${group.id})}" method="post">
+                <div class="form-group">
+                    <label for="name" class="form-label">Group Name *</label>
+                    <input type="text" id="name" name="name" class="form-control"
+                           th:value="${group.name}" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="description" class="form-label">Description</label>
+                    <textarea id="description" name="description" class="form-control"
+                              rows="3" th:text="${group.description}"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                    <a th:href="@{/groups/{id}(id=${group.id})}" class="btn btn-outline">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <p>&copy; 2024 Email Reminders</p>
+    </footer>
+</body>
+</html>

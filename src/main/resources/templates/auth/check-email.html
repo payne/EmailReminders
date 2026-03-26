@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Check Your Email - Email Reminders</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <header class="site-header">
+        <nav class="nav-container">
+            <a th:href="@{/}" class="logo">Email Reminders</a>
+            <div class="nav-links">
+                <a th:href="@{/login}">Login</a>
+                <a th:href="@{/register}">Register</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="main-content">
+        <div class="auth-container">
+            <div class="auth-card text-center">
+                <div style="font-size: 4rem; margin-bottom: 1rem;">&#9993;</div>
+                <h1 class="auth-title">Check Your Email</h1>
+
+                <p class="mb-3">
+                    We've sent a magic link to
+                    <strong th:if="${email}" th:text="${email}">your email</strong>.
+                </p>
+
+                <p class="text-muted mb-3">
+                    Click the link in the email to sign in. The link expires in 15 minutes.
+                </p>
+
+                <p class="text-muted">
+                    Didn't receive the email? Check your spam folder or
+                    <a th:href="@{/login}">try again</a>.
+                </p>
+            </div>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <p>&copy; 2024 Email Reminders</p>
+    </footer>
+</body>
+</html>

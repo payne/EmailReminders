@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${pageTitle} + ' - Email Reminders'">My Events - Email Reminders</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <header class="site-header">
+        <nav class="nav-container">
+            <a th:href="@{/}" class="logo">Email Reminders</a>
+            <div class="nav-links">
+                <a th:href="@{/dashboard}">Dashboard</a>
+                <a th:href="@{/groups}">Groups</a>
+                <a th:href="@{/events}" class="active">Events</a>
+                <a th:href="@{/profile}">Profile</a>
+                <form th:action="@{/logout}" method="post" class="logout-form">
+                    <button type="submit" class="btn-link">Logout</button>
+                </form>
+            </div>
+        </nav>
+    </header>
+
+    <main class="main-content">
+        <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+
+        <div class="page-header">
+            <h1 class="page-title">My Events</h1>
+            <a th:href="@{/events/new}" class="btn btn-primary">Create Event</a>
+        </div>
+
+        <div th:if="${#lists.isEmpty(events)}" class="card empty-state">
+            <p>No events found.</p>
+            <a th:href="@{/events/new}" class="btn btn-primary mt-2">Create Your First Event</a>
+        </div>
+
+        <div th:unless="${#lists.isEmpty(events)}" class="grid grid-3">
+            <div th:each="event : ${events}" class="card">
+                <h3 class="card-title mb-1">
+                    <a th:href="@{/events/{id}(id=${event.id})}" th:text="${event.title}">Event Title</a>
+                </h3>
+                <p class="text-muted mb-1">
+                    <span th:text="${#temporals.format(event.eventTime, 'MMM d, yyyy h:mm a')}">Jan 1, 2024</span>
+                </p>
+                <span th:if="${event.isRecurring}" class="badge badge-primary">Recurring</span>
+                <span th:unless="${event.isRecurring}" class="badge badge-success">One-time</span>
+            </div>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <p>&copy; 2024 Email Reminders</p>
+    </footer>
+</body>
+</html>
